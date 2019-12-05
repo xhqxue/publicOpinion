@@ -1,5 +1,5 @@
 ---
-title: "在R Markdown文档中使用中文"
+title: "tips"
 author:
   - 小鹤
 documentclass: ctexart
