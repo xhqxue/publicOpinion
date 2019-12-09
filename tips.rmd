@@ -6,7 +6,7 @@ documentclass: ctexart
 output:
   rticles::ctex:
     fig_caption: yes
-    number_sections: yes
+    number_sections: yes 
     toc: yes
 classoption: "hyperref,"
 ---
@@ -18,6 +18,20 @@ classoption: "hyperref,"
 # 载入igraph包
 library(igraph)
 ```
+
+```{r}
+set.seed(10)
+g1 <- sample_smallworld(1, 200, 5, 0.05)
+vcount(g1)
+ecount(g1)
+# 图的直径
+diameter(g1)
+# 图的密度
+edge_density(g1)
+
+```
+
+
 
 2. 简单的图
 ```{r}

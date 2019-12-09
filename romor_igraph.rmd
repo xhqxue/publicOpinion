@@ -1,0 +1,53 @@
+---
+title: "romor"
+author:
+  - 小鹤
+documentclass: ctexart
+output:
+  rticles::ctex:
+    fig_caption: yes
+    number_sections: yes 
+    toc: yes
+classoption: "hyperref,"
+---
+
+```{r}
+library(igraph)
+```
+
+
+# 无向网络的传播
+## 建立网络
+
+```{r}
+seed<-c(1:100)
+set.seed(seed[1])
+g1 <- sample_smallworld(1, 200, 5, 0.05)
+set.seed(seed[2])
+g2 <- sample_smallworld(1, 200, 5, 0.05)
+set.seed(seed[3])
+g3 <- sample_smallworld(1, 200, 5, 0.05)
+
+```
+
+
+# 有向网络的传播
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
