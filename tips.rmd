@@ -53,7 +53,7 @@ plot(x=1:10,y=rep(2,10),cex=5,col="dark red",pch=19,ylim = c(0,10))
 points(x=1:10,y=rep(4,10),cex=3,col="557799",pch=2)
 points(x=1:10,y=rep(6,10),cex=1,col=rgb(.2,.5,.7,alpha = .5),pch=4)
 points(x=1:10,y=rep(8,10),cex=7,col=rgb(123,45,209,maxColorValue = 255),pch=18)
-line(x=1:10,y=rep(9,10),col="red")
+#line(x=1:10,y=rep(9,10),col="red")
 ```
 
 
