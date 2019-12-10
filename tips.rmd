@@ -97,10 +97,24 @@ plot_fua<-function(fm,to,by){
 }
 ```
 
+# Rmarkdown 写论文
+
+## 插入公式
 
 
+[参考网址](https://www.jianshu.com/p/779a919cae13)
+总之使用美元符号
 
+## 插入参考文献
 
+1. 在项目所在的文件夹建立"**.bib"文件
+2. 在文件的开头加入"bibliography: **.bib"
+3. 使用网页的引用，找到"Bib.txt"，复制
+4. 找到合适的csl文件，可在[此网址下载](https://github.com/citation-style-language/styles)
+5. 把合适的文件放在项目所在的文件夹下
+6. 在文件开头加入"csl: china-national-standard-gb-t-7714-2015-numeric.csl"
+7. 在文中可以使用"[@&&&]"来进行引用,&&&为"bib.txt"第一行的文本
+8. 生成的文件的最后不需要特别说明，会出现参考文献
 
 
 
