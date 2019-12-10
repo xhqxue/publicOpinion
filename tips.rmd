@@ -31,6 +31,9 @@ edge_density(g1)
 # 点的相邻点 ego（graph，length，node）   length 相隔几个点  node 哪个点
 unlist(ego(g1,1,10))
 
+# 点邻居的统计，得到结果为list，下例中，1 位邻居长度，6 是查询的点
+
+ego(g1,1,6)
 
 ```
 
