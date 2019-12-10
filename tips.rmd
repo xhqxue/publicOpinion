@@ -107,6 +107,9 @@ plot_fua<-function(fm,to,by){
 
 ## 插入参考文献
 
+[参考网址](https://sspai.com/post/53998)
+
+
 1. 在项目所在的文件夹建立"**.bib"文件
 2. 在文件的开头加入"bibliography: **.bib"
 3. 使用网页的引用，找到"Bib.txt"，复制
