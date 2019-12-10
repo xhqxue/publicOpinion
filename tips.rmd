@@ -28,6 +28,9 @@ ecount(g1)
 diameter(g1)
 # 图的密度
 edge_density(g1)
+# 点的相邻点 ego（graph，length，node）   length 相隔几个点  node 哪个点
+unlist(ego(g1,1,10))
+
 
 ```
 
@@ -69,6 +72,30 @@ rm(a)
 ```
 
 
+# 绘制函数图像
+
+```{r}
+fun_cal<-function(x){
+  
+  a<-10
+  # beta IBK  个人教育背景
+  beta<-1
+  # omega FR 忘记因素
+  omega<-3
+  # sigma   对谣言源头的信任度
+  sigma<-10
+  y<-a*exp((-1)*beta*x)*cos(omega*x+sigma)
+  y[which(y<0)]<-y[which(y<0)]*(-1)
+  return(y)
+}
+
+plot_fua<-function(fm,to,by){
+  x<-seq(fm,to,by)
+  y<-fun_cal(x)
+  plot(x,y)
+  lines(x,y)
+}
+```
 
 
 
