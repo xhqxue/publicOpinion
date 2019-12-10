@@ -9,11 +9,34 @@ output:
     number_sections: yes 
     toc: yes
 classoption: "hyperref,"
+bibliography: scholar.bib
+csl: china-national-standard-gb-t-7714-2015-numeric.csl
 ---
 
 ```{r}
 library(igraph)
 ```
+
+
+# 谣言的传播 
+## 个人对于谣言的兴趣程度
+1. 个人对谣言感兴趣的程度随着时间的增加而呈现波浪形的衰退，由以下公式表示
+
+$$A(t)=A_{int}e^{-\beta t}cos(\omega t + \delta)$$
+
+其中$A(t)$是$t$时刻个人对谣言感兴趣的程度，$A_{int}$是初始的感兴趣程度，$\beta$是个人的文化程度背景，$\omega$是个人的遗忘因素，每个人的记忆能力不同，$\delta$是的对于谣言的源头的信任程度。
+
+## 个人对谣言的观点
+1. 谣言被分为四类：否认，中立，质疑，支持。我们引入个人$v$对谣言的看法$B_v$,$B_v\in(-\infty,0]$代表了否认，$B_v\in[0,10]$代表了中立，$B_v\in[10,20]$代表了质疑，$B_v\in[20,\infty]$代表了支持。由此文献支持[@wang2017rumor]，展现了人们会出现一种类似牛群的心态，这种心态使人们盲目跟随他人，借用他们的意见。但是，当个人多次收到相同的信息时，由于信息冗余，对个人的影响可能不会像最初那样大[@ma2016rumor]。所以个人针对谣言的观点定义如下：
+$$
+B_v(t)=\sum_{u\in \mathbb{N}^v}\sum_{j=1}^{n} { \frac{B_u(t-1)}{j}}, \quad for \quad t>0
+$$
+其中$\mathbb{N}^v$是个体$v$的邻居节点的集合，$n$是个体$v$受到单个邻居影响的次数。
+
+## 谣言传播规则
+
+1. 本节的重点在谣言如何在多个在线社交网络（online social networks，OSNs）进行传播，关注了人机交互，主要回答了以下问题：谣言什么时候被发送？什么时候会被接受？会在哪一层网络被发送？
+
 
 
 # 无向网络的传播
@@ -36,7 +59,7 @@ g3 <- sample_smallworld(1, 200, 5, 0.05)
 
 
 
-
+## 参考文献
 
 
 
