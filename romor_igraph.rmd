@@ -13,13 +13,14 @@ bibliography: scholar.bib
 csl: china-national-standard-gb-t-7714-2015-numeric.csl
 ---
 
-```{r}
+```{r results='hide'}
 library(igraph)
 ```
 
 
 # 谣言的传播 
 ## 个人对于谣言的兴趣程度
+
 1. 个人对谣言感兴趣的程度随着时间的增加而呈现波浪形的衰退，由以下公式表示
 
 $$A(t)=A_{int}e^{-\beta t}cos(\omega t + \delta)$$
@@ -36,12 +37,14 @@ $$
 ## 谣言传播规则
 
 1. 本节的重点在谣言如何在多个在线社交网络（online social networks，OSNs）进行传播，关注了人机交互，主要回答了以下问题：谣言什么时候被发送？什么时候会被接受？会在哪一层网络被发送？
-
-
+2. 带有$n$个网络的OSNs由$\mathbb{G}^n=(I,G^n)$表示，其中$I=(V,C)$代表了个体集；对于每个个体来说，$i\in I$由以下两个内容表示，即$v\in V$节点和$c\in C$个性。个性决定了每个人对于谣言的不同反应，具体可参考 1.1。集合$G^n=\{ G_1=(V,E_1),\quad G_2=(V,E_2), \quad G_3=(V,E_3),...,G_n=(V,E_n) \}$是$n$个网络的集合，其中$G_i=(V,E_i)$是代表网络的有向图。如果$v\in G_i$但是$v\notin G_j$，那么$v$在$G_j$中就是孤立的点。
+3. 
 
 # 无向网络的传播
 ## 建立网络
 
+
+这里是第二个
 ```{r}
 seed<-c(1:100)
 set.seed(seed[1])
@@ -59,7 +62,7 @@ g3 <- sample_smallworld(1, 200, 5, 0.05)
 
 
 
-## 参考文献
+# 参考文献
 
 
 

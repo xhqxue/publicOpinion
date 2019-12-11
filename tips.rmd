@@ -14,12 +14,12 @@ classoption: "hyperref,"
 # 网络管理
 1. 载入igraph包
 
-```{r warning=FALSE}
+```{r warning=FALSE,results='hide'}
 # 载入igraph包
 library(igraph)
 ```
 
-```{r}
+```{r results='hold'}
 set.seed(10)
 g1 <- sample_smallworld(1, 200, 5, 0.05)
 vcount(g1)
