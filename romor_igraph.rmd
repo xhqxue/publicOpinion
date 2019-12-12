@@ -15,6 +15,31 @@ csl: china-national-standard-gb-t-7714-2015-numeric.csl
 
 ```{r results='hide',echo=FALSE,include=FALSE}
 library(igraph)
+# 得到每个节点的进度节点，返回向量
+get_in_degree<-function(g,n=1,mode="in"){
+  k<-ego(g,n,seq(length(V(g))),mode = mode)
+  # 以下注释为不含自身的进度
+  # for (i in seq(length(V(g)))) {
+  #   k[[i]]<-k[[i]][-which(k[[i]]==i)]
+  # }
+  return(k)
+}
+# 得到每个节点的进度节点的数量
+get_in_num<-function(k){
+  b<-NULL
+  for(i in seq(k)){
+    b<-c(b,length(k[[i]]))
+  }
+  return(b)
+}
+# 得到接受概率
+get_acc<-function(num_node,d,p_set){
+  p_acc<-matrix(rep(0,num_node*num_node),nrow = num_node)
+  for(i in seq(num_node)){
+    p_acc[i,]<-(1/(1+(d[i]/d)))*p_set
+  }
+  return(p_acc)
+}
 ```
 
 
@@ -52,7 +77,7 @@ $$
 $$
 p^{send}_{u}(t)=e^{-\beta t}|sin(\omega t+\delta)| \tag{4}
 $$
-6. 接受的概率。我们认为个体具有更高的in-degree，影响力越大[@kempe2003maximizing]，但是具有高in-degree的个体不容易受到影响，所以接受概率的公式如下
+6. 接受的概率。我们认为个体具有更高的in-degree，影响力越大[@kempe2003maximizing]，但是具有高in-degree的个体不容易受到影响，所以在$k$层发送者$u$和接受者$v$接受概率的公式如下
 $$
 p^{acc}_{v,u}={\frac {1}{1+d^k_{in}(v)/d^k_{in}(u)}}.P \tag{5}
 $$
@@ -73,7 +98,7 @@ $$
 
 
 ## 参数的确定
-1. $\beta\in[0.2,1.2]$, $\omega\in[\pi/12,\pi]$,$\delta\in[\pi/24.\pi/2]$
+1. $\beta\in[0.2,1.2]$, $\omega\in[\pi/12,\pi]$,$\delta\in[\pi/24,\pi/2]$
 2. 初始有10个节点被选择成为传播者，其观点也是随机的正或负
 
 ## 衡量的指标
@@ -97,18 +122,109 @@ $$
 
 ## 建立网络
 
-使用
+1. 使用BA模型建立无标度网络，规模设置为1000，个数为3.
 
-```{r}
+```{r echo=FALSE}
+# num_node 节点node的数量
+num_node<-1000
 seed<-c(1:100)
 set.seed(seed[1])
-g1 <- sample_smallworld(1, 200, 5, 0.5)
+g1 <- sample_pa(num_node)
 set.seed(seed[2])
-g2 <- sample_smallworld(1, 200, 5, 0.05)
+g2 <- sample_pa(num_node)
 set.seed(seed[3])
-g3 <- sample_smallworld(1, 200, 5, 0.05)
+g3 <- sample_pa(num_node)
 
 ```
+
+2. 计算每个节点的in-degree
+
+```{r }
+# k 序列，每个graph的节点的进度详情
+k1<-get_in_degree(g1)
+k2<-get_in_degree(g2)
+k3<-get_in_degree(g3)
+
+# d 矩阵，每个graph的节点的进度数量,d[i,j]为个体i在网络j的进度数量,最后一列为进度总数
+d<-matrix(rep(0,num_node*(3+1)), nrow = num_node, ncol = 4)
+d[,1]<-get_in_num(k1)
+d[,2]<-get_in_num(k2)
+d[,3]<-get_in_num(k3)
+d[,4]<-d[,1]+d[,2]+d[,3]
+
+```
+
+## 给个体分配属性
+
+```{r}
+id_all<-matrix(rep(0,num_node*3),ncol = 3)
+set.seed(100)
+# beta
+id_all[,1]<-runif(num_node,0.2,0.8)
+# omega
+id_all[,2]<-runif(num_node,pi/12,pi/2)
+# delta
+id_all[,3]<-runif(num_node,pi/24,pi/3)
+
+```
+
+## 看法以及感兴趣程度
+
+```{r}
+# time_step 实验的时间数，步数; a[i,j]为个体i在时间j对谣言的感兴趣程度
+time_step<-500
+a<-matrix(rep(0,time_step*num_node),ncol = time_step)
+# b[i,j]为个体i在时间j对谣言的看法
+b<-matrix(rep(0,time_step*num_node),ncol = time_step)
+```
+
+## 计算不同概率的公式
+
+1. 选择在网络上发布的概率
+```{r}
+# 不同个体选择在哪个网络发布的概率,p_net[i,j]为个体i在网络j发布的概率
+
+p_net<-matrix(rep(0,3*num_node),nrow = num_node,ncol = 3)
+p_net[,1]<-d[,1]/d[,4]
+p_net[,2]<-d[,2]/d[,4]
+p_net[,3]<-d[,3]/d[,4]
+
+```
+
+2. 发布谣言的概率
+
+```{r}
+
+```
+
+3. 接受谣言的概率
+```{r}
+# p_set为模型中的P,设定的概率参数
+p_set<-0.5
+# p_acc1[i,j]为接受者i，发送者v的接受概率
+# p_acc1<-matrix(rep(0,num_node*num_node),nrow = num_node)
+# for(i in seq(num_node)){
+#   p_acc1[i,]<-(1/(1+(d[i,1]/d[,1])))*p_set
+# }
+p_acc1<-get_acc(num_node,d[,1],p_set)
+p_acc2<-get_acc(num_node,d[,2],p_set)
+p_acc3<-get_acc(num_node,d[,3],p_set)
+# p_acc为多个矩阵的集合，方便计算
+p_acc<-list(p_acc1,p_acc2,p_acc3)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # 参考文献
