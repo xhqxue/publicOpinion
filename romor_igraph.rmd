@@ -72,6 +72,10 @@ R(t)=\sum_{i=1}^nR_i(t)\quad where \quad R_i(t)=\sum_{v\in V}A_v(t).d_{in}^i(v) 
 $$
 
 
+## 参数的确定
+1. $\beta\in[0.2,1.2]$, $\omega\in[\pi/12,\pi]$,$\delta\in[\pi/24.\pi/2]$
+2. 初始有10个节点被选择成为传播者，其观点也是随机的正或负
+
 ## 衡量的指标
 
 1. 传播者的数量的变化
@@ -89,27 +93,22 @@ $$
 
 这篇文章提出的谣言的人气是新的衡量谣言演变的工具。
 
-# 无向网络的传播
+# 有向网络的传播
 
 ## 建立网络
 
+使用
 
-这里是第二个
 ```{r}
 seed<-c(1:100)
 set.seed(seed[1])
-g1 <- sample_smallworld(1, 200, 5, 0.05)
+g1 <- sample_smallworld(1, 200, 5, 0.5)
 set.seed(seed[2])
 g2 <- sample_smallworld(1, 200, 5, 0.05)
 set.seed(seed[3])
 g3 <- sample_smallworld(1, 200, 5, 0.05)
 
 ```
-
-
-# 有向网络的传播
-
-
 
 
 # 参考文献
