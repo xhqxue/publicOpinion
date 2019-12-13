@@ -188,19 +188,20 @@ p_net<-matrix(rep(0,3*num_node),nrow = num_node,ncol = 3)
 p_net[,1]<-d[,1]/d[,4]
 p_net[,2]<-d[,2]/d[,4]
 p_net[,3]<-d[,3]/d[,4]
-
 ```
 
 2. 发布谣言的概率
 
 ```{r}
+# p_send[i,j]是个体i在时间j发布的概率
+p_send<-matrix(rep(0,time_step*num_node),nrow = num_node)
 
 ```
 
 3. 接受谣言的概率
 ```{r}
 # p_set为模型中的P,设定的概率参数
-p_set<-0.5
+p_set<-0.8
 # p_acc1[i,j]为接受者i，发送者v的接受概率
 # p_acc1<-matrix(rep(0,num_node*num_node),nrow = num_node)
 # for(i in seq(num_node)){
@@ -215,6 +216,16 @@ p_acc<-list(p_acc1,p_acc2,p_acc3)
 ```
 
 
+4. 传播过程
+
+```{r}
+
+
+
+
+
+
+```
 
 
 
