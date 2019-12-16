@@ -15,31 +15,7 @@ csl: china-national-standard-gb-t-7714-2015-numeric.csl
 
 ```{r results='hide',echo=FALSE,include=FALSE}
 library(igraph)
-# 得到每个节点的进度节点，返回向量
-get_in_degree<-function(g,n=1,mode="in"){
-  k<-ego(g,n,seq(length(V(g))),mode = mode)
-  # 以下注释为不含自身的进度
-  # for (i in seq(length(V(g)))) {
-  #   k[[i]]<-k[[i]][-which(k[[i]]==i)]
-  # }
-  return(k)
-}
-# 得到每个节点的进度节点的数量
-get_in_num<-function(k){
-  b<-NULL
-  for(i in seq(k)){
-    b<-c(b,length(k[[i]]))
-  }
-  return(b)
-}
-# 得到接受概率
-get_acc<-function(num_node,d,p_set){
-  p_acc<-matrix(rep(0,num_node*num_node),nrow = num_node)
-  for(i in seq(num_node)){
-    p_acc[i,]<-(1/(1+(d[i]/d)))*p_set
-  }
-  return(p_acc)
-}
+
 ```
 
 
@@ -122,6 +98,35 @@ $$
 
 ## 建立网络
 
+```{r results='hide',echo=FALSE,include=FALSE}
+# 得到每个节点的进度节点，返回向量
+get_in_degree<-function(g,n=1,mode="in"){
+  k<-ego(g,n,seq(length(V(g))),mode = mode)
+  # 以下注释为不含自身的进度
+  # for (i in seq(length(V(g)))) {
+  #   k[[i]]<-k[[i]][-which(k[[i]]==i)]
+  # }
+  return(k)
+}
+# 得到每个节点的进度节点的数量
+get_in_num<-function(k){
+  b<-NULL
+  for(i in seq(k)){
+    b<-c(b,length(k[[i]]))
+  }
+  return(b)
+}
+# 得到接受概率
+get_acc<-function(num_node,d,p_set){
+  p_acc<-matrix(rep(0,num_node*num_node),nrow = num_node)
+  for(i in seq(num_node)){
+    p_acc[i,]<-(1/(1+(d[i]/d)))*p_set
+  }
+  return(p_acc)
+}
+```
+
+
 1. 使用BA模型建立无标度网络，规模设置为1000，个数为3.
 
 ```{r echo=FALSE}
@@ -140,11 +145,16 @@ g3 <- sample_pa(num_node)
 2. 计算每个节点的in-degree
 
 ```{r }
-# k 序列，每个graph的节点的进度详情
+# k 序列，每个graph的节点的in-degree详情
 k1<-get_in_degree(g1)
 k2<-get_in_degree(g2)
 k3<-get_in_degree(g3)
 
+# k_all ,节点的邻居
+k_all1<-get_in_degree(g1,mode = "all")
+k_all2<-get_in_degree(g2,mode = "all")
+k_all3<-get_in_degree(g3,mode = "all")
+k_all<-list(k_all1,k_all2,k_all3)
 # d 矩阵，每个graph的节点的进度数量,d[i,j]为个体i在网络j的进度数量,最后一列为进度总数
 d<-matrix(rep(0,num_node*(3+1)), nrow = num_node, ncol = 4)
 d[,1]<-get_in_num(k1)
@@ -161,8 +171,10 @@ id_all<-matrix(rep(0,num_node*3),ncol = 3)
 set.seed(100)
 # beta
 id_all[,1]<-runif(num_node,0.2,0.8)
+set.seed(100)
 # omega
 id_all[,2]<-runif(num_node,pi/12,pi/2)
+set.seed(100)
 # delta
 id_all[,3]<-runif(num_node,pi/24,pi/3)
 
@@ -173,6 +185,7 @@ id_all[,3]<-runif(num_node,pi/24,pi/3)
 ```{r}
 # time_step 实验的时间数，步数; a[i,j]为个体i在时间j对谣言的感兴趣程度
 time_step<-500
+a_int<-10
 a<-matrix(rep(0,time_step*num_node),ncol = time_step)
 # b[i,j]为个体i在时间j对谣言的看法
 b<-matrix(rep(0,time_step*num_node),ncol = time_step)
@@ -188,6 +201,9 @@ p_net<-matrix(rep(0,3*num_node),nrow = num_node,ncol = 3)
 p_net[,1]<-d[,1]/d[,4]
 p_net[,2]<-d[,2]/d[,4]
 p_net[,3]<-d[,3]/d[,4]
+
+# p_net2 区间概率
+p_net2<-t(apply(p_net,1,cumsum))
 ```
 
 2. 发布谣言的概率
@@ -219,8 +235,66 @@ p_acc<-list(p_acc1,p_acc2,p_acc3)
 4. 传播过程
 
 ```{r}
+# 初始接受的点
+set.seed(100)
+# kk<-sample(seq(num_node),size = 10)
+kk<-c(1,2,3,4,10,14,56,108)
+# acc_i   个体是否接受romor,0为不接受，0.5为初始点，其他数字为接收时间点
+acc_i<-rep(0,num_node)
+acc_i[kk]<-0.5
+# acc_n 接受的次数
+acc_n<-rep(0,num_node)
+acc_n[kk]<-1
+# 个体是否发布，0为未发布，其他数字为发布的时间点
+spend_i<-rep(0,num_node)
 
+# 得到个体在接受romor后的发布概率
+get_p_send<-function(i,t,time_step){
+  # 自接受之日起，之后的时间
+  if(t==0.5){
+    t=0
+    }
+  all_t<-c((t+1):time_step)-t
+  p<-exp(-1*id_all[i,1]*all_t)*sin(id_all[i,2]*all_t+id_all[i,3])
+  return(p)
+}
 
+# 得到初始节点之后时间点的发布概率
+for(i in kk){
+  p_send[i,]<-get_p_send(i,0,time_step)
+}
+
+for(t in seq(time_step-10)){
+  # 接受谣言的个体
+  ra_i<-which(acc_i>0)
+  # # 未发布谣言的个体
+  # us_i<-which(spend_i==0)
+  us_i<-seq(num_node)
+  # 取交集，得到发布的个体
+  spend_t<-intersect(ra_i,us_i)
+  for(ii in spend_t){
+    # 是否发布
+    if(runif(1)<p_send[ii,t]){
+      spend_i[ii]<-t
+      # 选取网络层数
+      s_net<-which(p_net2[ii,]>runif(1))[1]
+      # 收集友邻
+      aaa<-as.numeric(k_all[[s_net]][[ii]])
+      # 随机数
+      pp<-runif(length(aaa))
+      # 接受romor的个体
+      aci<-which(pp<p_acc[[s_net]][aaa,ii])
+      ra_ii<-which(acc_i>0)
+      # 接受的次数
+      acc_n[intersect(aci,ra_ii)]<-acc_n[intersect(aci,ra_ii)]+1
+      acc_i[setdiff(aci,ra_ii)]<-t
+      for(ia in setdiff(aci,ra_ii)){
+        p_send[ia,c((t+1):time_step)]<-get_p_send(ia,t,time_step)
+      }
+    }
+    
+  }
+}
 
 
 

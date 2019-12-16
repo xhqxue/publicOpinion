@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018/W32TeX) (preloaded format=xelatex 2018.12.11)  12 DEC 2019 22:09
+This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2018/W32TeX) (preloaded format=xelatex 2018.12.11)  16 DEC 2019 08:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1147,18 +1147,18 @@ LaTeX Font Warning: Font shape `TU/FangSong(0)/m/it' undefined
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.53937> not available
 (Font)              Font shape `TU/lmtt/b/n' tried instead on input line 260.
 [5] [6]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 374.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 397.
 [7]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 374.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 397.
 (./romor_igraph.aux)
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 374.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 374.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 397.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 397.
 Package rerunfilecheck Info: File `romor_igraph.out' has not changed.
 (rerunfilecheck)             Checksum: AB76899BAA5DACD799D68464C9D32550.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 374.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 397.
  ) 
 Here is how much of TeX's memory you used:
  29994 strings out of 494944
