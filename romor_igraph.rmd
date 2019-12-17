@@ -1,5 +1,5 @@
 ---
-title: "romor"
+title: "rumor"
 author:
   - 小鹤
 documentclass: ctexart
@@ -39,6 +39,8 @@ B_v(t)=\sum_{u\in \mathbb{N}^v}\sum_{j=1}^{n} { \frac{B_u(t-1)}{j}}, \quad for \
 $$
 其中$\mathbb{N}^v$是个体$v$的邻居节点的集合，$n$是个体$v$受到单个邻居影响的次数。
 
+2. 可以使用的验证数据有重庆公交车坠河与女司机被人肉。此文[@zeng2019model]进行了分析。
+
 ## 谣言传播规则
 
 1. 本节的重点在谣言如何在多个在线社交网络（online social networks，OSNs）进行传播，关注了人机交互，主要回答了以下问题：谣言什么时候被发送？什么时候会被接受？会在哪一层网络被发送？
@@ -65,7 +67,7 @@ $$
 
 ## 谣言的传播过程
 
-1. 在时间$t=0$，一些个体会在$\mathbb{G}^n$的不同层中散播谣言，这些个体对谣言有着不同的信念，其他的个体对这件事不知情。在此过程中，如果有无知的个体根据公式$(6)$接受谣言，他们也会成为传播者，行为会遵循公式$(1)$，
+1. 在时间$t=0$，一些个体会在$\mathbb{G}^n$的不同层中散播谣言，这些个体对谣言有着不同的观点（opinion），其他的个体对这件事不知情。在此过程中，如果有无知的个体根据公式$(6)$接受谣言，他们也会成为传播者，行为会遵循公式$(1)$，
 2. 每个时间点有人接受了谣言，接受者针对谣言的观点就会根据公式$(2)$进行更新。个人可以接受多个谣言，但是只能传递每个接受的谣言一次。当参与者对谣言的兴趣消退时，便不会参与传播过程。
 3. 当谣言的人气恶化时，传播过程就结束了。在传播过程中，即$R(t)\simeq 0$。具体表达如下，其中$R_i(t)$表示了第$i$层累计的吸引力（考虑个人的权威程度）。
 $$
@@ -98,7 +100,7 @@ $$
 
 ## 建立网络
 
-```{r results='hide',echo=FALSE,include=FALSE}
+```{r results='hide',echo=FALSE,include=FALSE,eval=FALSE}
 # 得到每个节点的进度节点，返回向量
 get_in_degree<-function(g,n=1,mode="in"){
   k<-ego(g,n,seq(length(V(g))),mode = mode)
@@ -124,12 +126,25 @@ get_acc<-function(num_node,d,p_set){
   }
   return(p_acc)
 }
+
+# 得到个体在接受rumor后的发布概率
+get_p_send<-function(i,t,time_step){
+  # 自接受之日起，之后的时间
+  if(t==0.5){
+    t=0
+    }
+  all_t<-c((t+1):time_step)-t
+  p<-abs(exp(-1*id_all[i,1]*all_t)*sin(id_all[i,2]*all_t+id_all[i,3]))
+  return(p)
+}
+
+
 ```
 
 
 1. 使用BA模型建立无标度网络，规模设置为1000，个数为3.
 
-```{r echo=FALSE}
+```{r echo=FALSE,eval=FALSE}
 # num_node 节点node的数量
 num_node<-1000
 seed<-c(1:100)
@@ -144,7 +159,7 @@ g3 <- sample_pa(num_node)
 
 2. 计算每个节点的in-degree
 
-```{r }
+```{r eval=FALSE}
 # k 序列，每个graph的节点的in-degree详情
 k1<-get_in_degree(g1)
 k2<-get_in_degree(g2)
@@ -155,7 +170,8 @@ k_all1<-get_in_degree(g1,mode = "all")
 k_all2<-get_in_degree(g2,mode = "all")
 k_all3<-get_in_degree(g3,mode = "all")
 k_all<-list(k_all1,k_all2,k_all3)
-# d 矩阵，每个graph的节点的进度数量,d[i,j]为个体i在网络j的进度数量,最后一列为进度总数
+# d 矩阵，每个graph的节点的进度数量,d[i,j]为个体i在网络j的进度数量,
+# 最后一列为进度总数
 d<-matrix(rep(0,num_node*(3+1)), nrow = num_node, ncol = 4)
 d[,1]<-get_in_num(k1)
 d[,2]<-get_in_num(k2)
@@ -166,7 +182,7 @@ d[,4]<-d[,1]+d[,2]+d[,3]
 
 ## 给个体分配属性
 
-```{r}
+```{r eval=FALSE}
 id_all<-matrix(rep(0,num_node*3),ncol = 3)
 set.seed(100)
 # beta
@@ -182,20 +198,23 @@ id_all[,3]<-runif(num_node,pi/24,pi/3)
 
 ## 看法以及感兴趣程度
 
-```{r}
-# time_step 实验的时间数，步数; a[i,j]为个体i在时间j对谣言的感兴趣程度
+```{r eval=FALSE}
+# time_step 实验的时间数，步数; 
+
 time_step<-500
 a_int<-10
+# a[i,j]为个体i在时间j对谣言的感兴趣程度
 a<-matrix(rep(0,time_step*num_node),ncol = time_step)
-# b[i,j]为个体i在时间j对谣言的看法
+# b[i,j]为个体i在时间j对谣言的观点，opinion
 b<-matrix(rep(0,time_step*num_node),ncol = time_step)
 ```
 
 ## 计算不同概率的公式
 
 1. 选择在网络上发布的概率
-```{r}
-# 不同个体选择在哪个网络发布的概率,p_net[i,j]为个体i在网络j发布的概率
+```{r eval=FALSE}
+# 不同个体选择在哪个网络发布的概率,
+# p_net[i,j]为个体i在网络j发布的概率
 
 p_net<-matrix(rep(0,3*num_node),nrow = num_node,ncol = 3)
 p_net[,1]<-d[,1]/d[,4]
@@ -208,14 +227,14 @@ p_net2<-t(apply(p_net,1,cumsum))
 
 2. 发布谣言的概率
 
-```{r}
+```{r eval=FALSE}
 # p_send[i,j]是个体i在时间j发布的概率
 p_send<-matrix(rep(0,time_step*num_node),nrow = num_node)
 
 ```
 
 3. 接受谣言的概率
-```{r}
+```{r eval=FALSE}
 # p_set为模型中的P,设定的概率参数
 p_set<-2
 # p_acc1[i,j]为接受者i，发送者v的接受概率
@@ -232,14 +251,17 @@ p_acc<-list(p_acc1,p_acc2,p_acc3)
 ```
 
 
-4. 传播过程
+# 传播过程
 
-```{r}
+```{r eval=FALSE}
 # 初始接受的点
 set.seed(100)
-kk<-sample(seq(num_node),size = 10)
+kk<-sample(seq(num_node),size = 10)  
+# 初始成员的观点opinion
+b[kk,1]<-runif(10,-20,20)
 # kk<-c(1,2,3,4,10,14,56,108)
-# acc_i   个体是否接受romor,0为不接受，0.5为初始点，其他数字为接收时间点
+# acc_i   个体是否接受rumor,0为不接受，
+#        0.5为初始点，其他数字为接收时间点
 acc_i<-rep(0,num_node)
 acc_i[kk]<-0.5
 # acc_n 接受的次数
@@ -247,18 +269,6 @@ acc_n<-rep(0,num_node)
 acc_n[kk]<-1
 # 个体是否发布，0为未发布，其他数字为发布的时间点
 spend_i<-rep(0,num_node)
-
-# 得到个体在接受romor后的发布概率
-get_p_send<-function(i,t,time_step){
-  # 自接受之日起，之后的时间
-  if(t==0.5){
-    t=0
-    }
-  all_t<-c((t+1):time_step)-t
-  p<-abs(exp(-1*id_all[i,1]*all_t)*sin(id_all[i,2]*all_t+id_all[i,3]))
-  return(p)
-}
-
 # 得到初始节点之后时间点的发布概率
 for(i in kk){
   p_send[i,]<-get_p_send(i,0,time_step)
@@ -288,7 +298,7 @@ for(t in seq(time_step-10)){
       aaa<-as.numeric(k_all[[s_net]][[ii]])
       # 随机数
       pp<-runif(length(aaa))
-      # 接受romor的个体
+      # 接受rumor的个体
       # aci<-which(pp<p_acc[[s_net]][aaa,ii])
       aci<-aaa[which(pp<p_acc[[s_net]][aaa,ii])]
       ra_ii<-which(acc_i>0)
@@ -301,10 +311,31 @@ for(t in seq(time_step-10)){
     }
   }
   sender_t[t]<-s_t
+  # 得到观点opinion
+  if(t>1){
+    ra_ii<-which(acc_i>0)
+    ra_it<-which(acc_i<t)
+    ra_ii<-intersect(ra_ii,ra_it)
+    for (i_o in ra_ii) {
+      # 计算得到所有的邻居
+      n_o1<-as.numeric(k_all[[1]][[i_o]])
+      n_o2<-as.numeric(k_all[[2]][[i_o]])
+      n_o3<-as.numeric(k_all[[3]][[i_o]])
+      n_o<-union(n_o1,union(n_o2,n_o3))
+      # 邻居且接受rumor的
+      n_o<-intersect(n_o,ra_ii)
+      if(b[i_o,(t-1)]==0){
+        b[i_o,t]<-mean(b[n_o,(t-1)])/(1+id_all[i_o,1]) 
+      }else{
+        b[i_o,t]<-id_all[i_o,1]*b[i_o,(t-1)]+(1/id_all[i_o,1])*mean(b[n_o,(t-1)])
+      }
+      
+    }
+  }
 }
 ```
 
-```{r}
+```{r eval=FALSE}
 length(which(acc_i==0))
 length(which(acc_n==0))
 ```
@@ -312,34 +343,68 @@ length(which(acc_n==0))
 
 # 结果的指标统计
 
-## 传播者的数量变化
+## 传播者/接受者的数量变化
 
-```{r}
-plot(c(1:100),sender_t[1:100])
-
+```{r eval=FALSE}
+# 由于后期的数据大都为0或变化很小，选择部分前期的数据
+t_end<-100
+# 不同时期传播者的数量绘图
+plot(c(1:t_end),sender_t[1:t_end])
+# 不同时期接受者的数量绘图
+bb<-sort(unique(acc_i))
+if(bb[1]==0){
+  bb<-bb[-1]
+}
+bb[1]<-0
+bc<-NULL
+for(i in seq(bb)){
+  bc<-c(bc,length(which(acc_i==bb[i])))
+}
+points(bb,bc)
+lines(bb,bc)
 ```
 
-## romor传播情况（感染人数）
+## rumor传播情况（感染人数）
 
-```{r}
-
+```{r eval=FALSE}
+ca<-c(0:t_end)
+cb<-rep(0,(t_end+1))
+for(i in seq(bb)){
+  cb[(bb[i]+1)]<-bc[i]
+}
+cc<-cumsum(cb)
+plot(ca,cc)
+lines(ca,cc)
 ```
 
-## romor人气的衡量
+## rumor人气的衡量
 
-```{r}
+```{r eval=FALSE}
+a<-p_send*a_int
+# a_all[t,i] 网络层i在时间t的人气值
+a_all<-matrix(rep(0,time_step*4),ncol = 4)
+for (i in c(1,2,3)) {
+  for(ii in seq(time_step)){
+    a_all[ii,i]<-sum(a[,ii]*d[,i])
+  }
+}
+a_all[,4]<-a_all[,1]+a_all[,2]+a_all[,3]
+
+plot(c(1:t_end),a_all[1:t_end,4])
+
 
 ```
 
 ## 群体关于谣言的观点
 
-```{r}
+```{r eval=FALSE}
+op_b<-colSums(b)
 
 ```
 
-## romor影响，感染人数，没有负面观点的人数
+## rumor影响，感染人数，没有负面观点的人数
 
-```{r}
+```{r eval=FALSE}
 
 ```
 
