@@ -263,6 +263,8 @@ get_p_send<-function(i,t,time_step){
 for(i in kk){
   p_send[i,]<-get_p_send(i,0,time_step)
 }
+# sender_t[t] t时间的传播者数量
+sender_t<-rep(0,time_step)
 
 for(t in seq(time_step-10)){
   # 接受谣言的个体
@@ -272,10 +274,13 @@ for(t in seq(time_step-10)){
   us_i<-seq(num_node)
   # 取交集，得到发布的个体
   spend_t<-intersect(ra_i,us_i)
+  # 发布者数量的计数
+  s_t<-0
   for(ii in spend_t){
     # 是否发布
    # browser()
     if(runif(1)<p_send[ii,t]){
+      s_t<-s_t+1
       spend_i[ii]<-t
       # 选取网络层数
       s_net<-which(p_net2[ii,]>runif(1))[1]
@@ -294,13 +299,9 @@ for(t in seq(time_step-10)){
         p_send[ia,c((t+1):time_step)]<-get_p_send(ia,t,time_step)
       }
     }
-    
   }
+  sender_t[t]<-s_t
 }
-
-
-
-
 ```
 
 ```{r}
@@ -309,11 +310,38 @@ length(which(acc_n==0))
 ```
 
 
+# 结果的指标统计
 
+## 传播者的数量变化
 
+```{r}
+plot(c(1:100),sender_t[1:100])
 
+```
 
+## romor传播情况（感染人数）
 
+```{r}
+
+```
+
+## romor人气的衡量
+
+```{r}
+
+```
+
+## 群体关于谣言的观点
+
+```{r}
+
+```
+
+## romor影响，感染人数，没有负面观点的人数
+
+```{r}
+
+```
 
 
 
