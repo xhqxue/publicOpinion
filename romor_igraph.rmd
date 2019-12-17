@@ -217,7 +217,7 @@ p_send<-matrix(rep(0,time_step*num_node),nrow = num_node)
 3. 接受谣言的概率
 ```{r}
 # p_set为模型中的P,设定的概率参数
-p_set<-0.8
+p_set<-2
 # p_acc1[i,j]为接受者i，发送者v的接受概率
 # p_acc1<-matrix(rep(0,num_node*num_node),nrow = num_node)
 # for(i in seq(num_node)){
@@ -237,8 +237,8 @@ p_acc<-list(p_acc1,p_acc2,p_acc3)
 ```{r}
 # 初始接受的点
 set.seed(100)
-# kk<-sample(seq(num_node),size = 10)
-kk<-c(1,2,3,4,10,14,56,108)
+kk<-sample(seq(num_node),size = 10)
+# kk<-c(1,2,3,4,10,14,56,108)
 # acc_i   个体是否接受romor,0为不接受，0.5为初始点，其他数字为接收时间点
 acc_i<-rep(0,num_node)
 acc_i[kk]<-0.5
@@ -255,7 +255,7 @@ get_p_send<-function(i,t,time_step){
     t=0
     }
   all_t<-c((t+1):time_step)-t
-  p<-exp(-1*id_all[i,1]*all_t)*sin(id_all[i,2]*all_t+id_all[i,3])
+  p<-abs(exp(-1*id_all[i,1]*all_t)*sin(id_all[i,2]*all_t+id_all[i,3]))
   return(p)
 }
 
@@ -274,6 +274,7 @@ for(t in seq(time_step-10)){
   spend_t<-intersect(ra_i,us_i)
   for(ii in spend_t){
     # 是否发布
+   # browser()
     if(runif(1)<p_send[ii,t]){
       spend_i[ii]<-t
       # 选取网络层数
@@ -283,10 +284,11 @@ for(t in seq(time_step-10)){
       # 随机数
       pp<-runif(length(aaa))
       # 接受romor的个体
-      aci<-which(pp<p_acc[[s_net]][aaa,ii])
+      # aci<-which(pp<p_acc[[s_net]][aaa,ii])
+      aci<-aaa[which(pp<p_acc[[s_net]][aaa,ii])]
       ra_ii<-which(acc_i>0)
       # 接受的次数
-      acc_n[intersect(aci,ra_ii)]<-acc_n[intersect(aci,ra_ii)]+1
+      acc_n[aci]<-acc_n[aci]+1
       acc_i[setdiff(aci,ra_ii)]<-t
       for(ia in setdiff(aci,ra_ii)){
         p_send[ia,c((t+1):time_step)]<-get_p_send(ia,t,time_step)
@@ -301,6 +303,10 @@ for(t in seq(time_step-10)){
 
 ```
 
+```{r}
+length(which(acc_i==0))
+length(which(acc_n==0))
+```
 
 
 
