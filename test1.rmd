@@ -1,0 +1,29 @@
+---
+title: "Untitled"
+author: "hqxue"
+date: "2019/12/18"
+output: pdf_document
+---
+```{r}
+a<-F
+```
+
+
+# hfuahefhaefa
+
+
+```{r fig.asp=1,fig.width=3.2,fig.align='center',fig.show='hold'}
+plot(c(1:10),c(1:10))
+plot(c(1:100),c(1:100))
+plot(c(1:10),runif(10))
+plot(c(1:10),runif(10))
+```
+# next
+
+```{r fig.width=2.2}
+knitr::include_graphics(rep("images/knit-logo.png", 3))
+```
+
+```{r fig.width=2.2,fig.align='center',eval=a}
+knitr::include_graphics("images/knit-logo.png")
+```
