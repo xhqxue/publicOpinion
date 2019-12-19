@@ -15,8 +15,11 @@ csl: china-national-standard-gb-t-7714-2015-numeric.csl
 
 ```{r results='hide',echo=FALSE,include=FALSE}
 library(igraph)
+library(ggplot2)
 show_code_a<-F
 show_code_b<-F
+run_code_a<-F
+run_code_b<-T
 ```
 
 # 目前状态总结
@@ -27,6 +30,8 @@ show_code_b<-F
 2. 改变参数（包括外在因素：rumor的质量P，内在因素：网络中中心节点知识背景$\beta$等,），进行大量实验（下一步）
 3. 对实验结果统计分析，与突变模型进行拟合，并结合已知的弹性文献，得到合适的弹性模型。（之后）
 4. 找到现实的案例进行结合说明（如重庆公交坠桥，女司机被网民造谣事件）
+
+2和3预计需要一周时间。
 
 ## 当前研究的创新点
 
@@ -122,7 +127,7 @@ $$
 
 ## 建立网络
 
-```{r results='hide',echo=show_code_a,include=FALSE}
+```{r results='hide',echo=show_code_a,include=FALSE,eval=run_code_a}
 # 得到每个节点的进度节点，返回向量
 get_in_degree<-function(g,n=1,mode="in"){
   k<-ego(g,n,seq(length(V(g))),mode = mode)
@@ -173,7 +178,7 @@ ra_mode<-function(op_1,op_2,u_1,bg){
 
 1. 使用BA模型建立无标度网络，规模设置为1000，个数为3.
 
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 # num_node 节点node的数量
 num_node<-1000
 seed<-c(1:100)
@@ -188,7 +193,7 @@ g3 <- sample_pa(num_node)
 
 2. 计算每个节点的in-degree
 
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 # k 序列，每个graph的节点的in-degree详情
 k1<-get_in_degree(g1)
 k2<-get_in_degree(g2)
@@ -220,7 +225,7 @@ d[,4]<-d[,1]+d[,2]+d[,3]
 
 ## 给个体分配属性
 
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 id_all<-matrix(rep(0,num_node*3),ncol = 3)
 set.seed(100)
 # beta
@@ -236,7 +241,7 @@ id_all[,3]<-runif(num_node,pi/24,pi/3)
 
 ## 看法以及感兴趣程度
 
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 # time_step 实验的时间数，步数; 
 
 time_step<-500
@@ -252,7 +257,7 @@ b_u<-runif(num_node,0,0.4)
 ## 计算不同概率的公式
 
 1. 选择在网络上发布的概率
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 # 不同个体选择在哪个网络发布的概率,
 # p_net[i,j]为个体i在网络j发布的概率
 
@@ -267,14 +272,14 @@ p_net2<-t(apply(p_net,1,cumsum))
 
 2. 发布谣言的概率
 
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 # p_send[i,j]是个体i在时间j发布的概率
 p_send<-matrix(rep(0,time_step*num_node),nrow = num_node)
 
 ```
 
 3. 接受谣言的概率
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 # p_set为模型中的P,设定的概率参数
 p_set<-2
 # p_acc1[i,j]为接受者i，发送者v的接受概率
@@ -293,7 +298,7 @@ p_acc<-list(p_acc1,p_acc2,p_acc3)
 
 # 传播过程
 
-```{r echo=show_code_a}
+```{r echo=show_code_a,eval=run_code_a}
 # 初始接受的点
 set.seed(100)
 kk<-sample(seq(num_node),size = 10)  
@@ -393,7 +398,24 @@ for(t in seq(time_step-10)){
 
 ## 传播者/接受者的数量变化
 
-```{r echo=show_code_b}
+```{r echo=F}
+# 图片是否在中间
+fig_a<-"center"
+# 图片的高宽比，高/宽
+fig_asp<-1.2
+# 图片的宽度 3.2 可以放两个，
+fig_w1<-5
+fig_w2<-2
+# 是否load已有数据
+if(run_code_a==F){
+  load("first.Rdata")
+}
+```
+
+
+
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
+
 # 由于后期的数据大都为0或变化很小，选择部分前期的数据
 t_end<-100
 # 不同时期传播者的数量绘图
@@ -414,7 +436,7 @@ lines(bb,bc)
 
 ## rumor传播情况（感染人数）
 
-```{r echo=show_code_b }
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
 ca<-c(0:t_end)
 cb<-rep(0,(t_end+1))
 for(i in seq(bb)){
@@ -427,7 +449,7 @@ lines(ca,cc)
 
 ## rumor人气的衡量
 
-```{r  echo=show_code_b}
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
 a<-p_send*a_int
 # a_all[t,i] 网络层i在时间t的人气值
 a_all<-matrix(rep(0,time_step*4),ncol = 4)
@@ -445,7 +467,7 @@ plot(c(1:t_end),a_all[1:t_end,4])
 
 ## 群体关于谣言的观点
 
-```{r  echo=show_code_b}
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w2,fig.asp=fig_asp,fig.show='hold'}
 
 op_psum<-function(m){
     return(sum(m[which(m>0)]))
@@ -481,7 +503,7 @@ plot(c(1:100),op_nn[1:100])
 ## rumor影响，感染人数
 
 
-```{r  echo=show_code_b}
+```{r  echo=show_code_b,eval=run_code_b}
 length(which(acc_i>0))
 length(which(acc_i>0))/num_node
 

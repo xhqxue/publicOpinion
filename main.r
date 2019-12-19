@@ -1,4 +1,5 @@
-source(functions.r)
+library(igraph)
+source("functions.r")
 # 建立网络----------------------------
 # 使用BA模型建立无标度网络，规模设置为1000，个数为3.
 # num_node 节点node的数量
