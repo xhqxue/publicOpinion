@@ -13,7 +13,7 @@ bibliography: scholar.bib
 csl: china-national-standard-gb-t-7714-2015-numeric.csl
 ---
 
-```{r results='hide',echo=FALSE,include=FALSE}
+```{r results='hide',echo=FALSE}
 library(igraph)
 library(ggplot2)
 show_code_a<-F
@@ -402,10 +402,10 @@ for(t in seq(time_step-10)){
 # 图片是否在中间
 fig_a<-"center"
 # 图片的高宽比，高/宽
-fig_asp<-1.2
+fig_asp<-1
 # 图片的宽度 3.2 可以放两个，
-fig_w1<-5
-fig_w2<-2
+fig_w1<-4
+fig_w2<-3
 # 是否load已有数据
 if(run_code_a==F){
   load("first.Rdata")
@@ -413,28 +413,42 @@ if(run_code_a==F){
 ```
 
 
+1. 这是根据仿真模型得到的图
 
 ```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
 
 # 由于后期的数据大都为0或变化很小，选择部分前期的数据
 t_end<-100
 # 不同时期传播者的数量绘图
-plot(c(1:t_end),sender_t[1:t_end])
-# 不同时期接受者的数量绘图
-bb<-sort(unique(acc_i))
-if(bb[1]==0){
-  bb<-bb[-1]
-}
-bb[1]<-0
-bc<-NULL
-for(i in seq(bb)){
-  bc<-c(bc,length(which(acc_i==bb[i])))
-}
-points(bb,bc)
-lines(bb,bc)
+s_data1<-data.frame(time=c(1:t_end),number=sender_t[1:t_end])
+qplot(time,number,data=s_data1,geom="line",col="red")
+# # 不同时期接受者的数量绘图----
+# bb<-sort(unique(acc_i))
+# if(bb[1]==0){
+#   bb<-bb[-1]
+# }
+# bb[1]<-0
+# bc<-NULL
+# for(i in seq(bb)){
+#   bc<-c(bc,length(which(acc_i==bb[i])))
+# }
+# s_data2<-data.frame(time=bb,number=bc)
+# qplot(time,number,data=s_data2,geom="line",col="green")
+# # geom_line(data=s_data2,aes(x=time,y=number,color="green"),size=1)
+# # points(bb,bc)
+# # lines(bb,bc)
+# ----
+```
+
+2. 这是参考文献的图
+
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1}
+knitr::include_graphics("images/rumor_number.png")
 ```
 
 ## rumor传播情况（感染人数）
+
+1. 模型的图形
 
 ```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
 ca<-c(0:t_end)
@@ -443,11 +457,23 @@ for(i in seq(bb)){
   cb[(bb[i]+1)]<-bc[i]
 }
 cc<-cumsum(cb)
-plot(ca,cc)
-lines(ca,cc)
+g_data<-data.frame(time=ca,number=cc/num_node)
+qplot(time,number,data=g_data,geom="line",col="red")
+# plot(ca,cc)
+# lines(ca,cc)
 ```
 
+2. 参考文献的图形
+
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1}
+knitr::include_graphics("images/rumor_infected.png")
+```
+
+
+
 ## rumor人气的衡量
+
+1. 模型计算
 
 ```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
 a<-p_send*a_int
@@ -459,11 +485,21 @@ for (i in c(1,2,3)) {
   }
 }
 a_all[,4]<-a_all[,1]+a_all[,2]+a_all[,3]
-
-plot(c(1:t_end),a_all[1:t_end,4])
+po_data<-data.frame(time=c(1:t_end),number=a_all[1:t_end,4])
+qplot(time,number,data=po_data,geom="line",col="red")
+# plot(c(1:t_end),a_all[1:t_end,4])
 
 
 ```
+
+2. 参考文献图形
+
+
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1}
+knitr::include_graphics("images/rumor_popular.png")
+```
+
+
 
 ## 群体关于谣言的观点
 
@@ -486,23 +522,47 @@ op_n<-apply(b, 2, op_nsum)
 op_pn<-apply(b, 2, op_pnum)
 op_nn<-apply(b, 2, op_nnum)
 op_b<-colSums(b)
-# 加和之后的情感走向
-plot(c(1:100),op_b[1:100])
-# 大于0的整体情感走向
-plot(c(1:100),op_p[1:100])
-# 小于0的整体情感走向
-plot(c(1:100),op_n[1:100])
 
-# 大于0的人数统计
-plot(c(1:100),op_pn[1:100])
-# 小于0的人数统计
-plot(c(1:100),op_nn[1:100])
+op_data<-data.frame(time=c(1:100),op_b=op_b[1:100],op_p=op_p[1:100],op_n=op_n[1:100],op_pn=op_pn[1:100],op_nn=op_nn[1:100])
 
+# 
+# # 加和之后的观点走向
+# plot(c(1:100),op_b[1:100])
+# # 大于0的整体观点走向
+# plot(c(1:100),op_p[1:100])
+# # 小于0的整体观点走向
+# plot(c(1:100),op_n[1:100])
+# 
+# # 大于0的人数统计
+# plot(c(1:100),op_pn[1:100])
+# # 小于0的人数统计
+# plot(c(1:100),op_nn[1:100])
+
+```
+
+1. 总体观点的统计（每一时刻的观点加和）
+
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp,fig.show='hold'}
+qplot(time,op_b,data = op_data,xlab="time",ylab="opinion",geom="line")
+```
+
+2. 以0为分界线，对观点统计（每一时刻大于0的进行统计或小于0的进行统计）
+
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w2,fig.asp=fig_asp,fig.show='hold'}
+qplot(time,op_p,data = op_data,xlab="time",ylab="opinion",geom="line")
+qplot(time,op_n,data = op_data,xlab="time",ylab="opinion",geom="line")
+```
+
+3. 以0为分界线，对观点人数统计（每一时刻大于0的人数进行统计或小于0的人数进行统计）
+
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w2,fig.asp=fig_asp,fig.show='hold'}
+qplot(time,op_p,data = op_data,xlab="time",ylab="opinion",geom="line")
+qplot(time,op_n,data = op_data,xlab="time",ylab="opinion",geom="line")
 ```
 
 ## rumor影响，感染人数
 
-
+1. 模型计算
 ```{r  echo=show_code_b,eval=run_code_b}
 length(which(acc_i>0))
 length(which(acc_i>0))/num_node
