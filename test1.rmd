@@ -12,12 +12,15 @@ a<-F
 # hfuahefhaefa
 
 
-```{r fig.asp=1,fig.width=3.2,fig.align='center',fig.show='hold'}
+```{r testF, fig.cap="test F",fig.asp=1,fig.width=3.2,fig.align='center',fig.show='hold'}
 plot(c(1:10),c(1:10))
 plot(c(1:100),c(1:100))
 plot(c(1:10),runif(10))
 plot(c(1:10),runif(10))
 ```
+
+above cition@\ref(fig:testF) here
+
 # next
 
 ```{r fig.width=2.2}

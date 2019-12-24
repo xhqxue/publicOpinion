@@ -406,6 +406,9 @@ fig_asp<-1
 # 图片的宽度 3.2 可以放两个，
 fig_w1<-4
 fig_w2<-3
+out_w1<-'30%'
+out_w2<-'60%'
+q12<-"echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1"
 # 是否load已有数据
 if(run_code_a==F){
   load("first.Rdata")
@@ -413,9 +416,9 @@ if(run_code_a==F){
 ```
 
 
-1. 这是根据仿真模型得到的图
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
+
+```{r testFigure, fig.cap="仿真图形",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 
 # 由于后期的数据大都为0或变化很小，选择部分前期的数据
 t_end<-100
@@ -440,9 +443,11 @@ qplot(time,number,data=s_data1,geom="line",col="red")
 # ----
 ```
 
+1. 这是根据仿真模型得到的图\@ref(fig:testFigure) 所示
+
 2. 这是参考文献的图
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1}
+```{r fig.cap="参考文献" ,echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 knitr::include_graphics("images/rumor_number.png")
 ```
 
@@ -450,7 +455,7 @@ knitr::include_graphics("images/rumor_number.png")
 
 1. 模型的图形
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
+```{r fig.cap="仿真图形传播情况",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 ca<-c(0:t_end)
 cb<-rep(0,(t_end+1))
 for(i in seq(bb)){
@@ -465,7 +470,7 @@ qplot(time,number,data=g_data,geom="line",col="red")
 
 2. 参考文献的图形
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1}
+```{r fig.cap="参考文献传播情况" ,echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 knitr::include_graphics("images/rumor_infected.png")
 ```
 
@@ -475,7 +480,7 @@ knitr::include_graphics("images/rumor_infected.png")
 
 1. 模型计算
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp}
+```{r fig.cap="仿真图形人气",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 a<-p_send*a_int
 # a_all[t,i] 网络层i在时间t的人气值
 a_all<-matrix(rep(0,time_step*4),ncol = 4)
@@ -495,7 +500,7 @@ qplot(time,number,data=po_data,geom="line",col="red")
 2. 参考文献图形
 
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1}
+```{r fig.cap="参考文献人气" ,echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 knitr::include_graphics("images/rumor_popular.png")
 ```
 
@@ -503,7 +508,7 @@ knitr::include_graphics("images/rumor_popular.png")
 
 ## 群体关于谣言的观点
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w2,fig.asp=fig_asp,fig.show='hold'}
+```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 
 op_psum<-function(m){
     return(sum(m[which(m>0)]))
@@ -542,20 +547,20 @@ op_data<-data.frame(time=c(1:100),op_b=op_b[1:100],op_p=op_p[1:100],op_n=op_n[1:
 
 1. 总体观点的统计（每一时刻的观点加和）
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w1,fig.asp=fig_asp,fig.show='hold'}
+```{r fig.cap="仿真图形总体观点",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 qplot(time,op_b,data = op_data,xlab="time",ylab="opinion",geom="line")
 ```
 
 2. 以0为分界线，对观点统计（每一时刻大于0的进行统计或小于0的进行统计）
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w2,fig.asp=fig_asp,fig.show='hold'}
+```{r fig.cap="仿真图形观点",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1,fig.show='hold'}
 qplot(time,op_p,data = op_data,xlab="time",ylab="opinion",geom="line")
 qplot(time,op_n,data = op_data,xlab="time",ylab="opinion",geom="line")
 ```
 
 3. 以0为分界线，对观点人数统计（每一时刻大于0的人数进行统计或小于0的人数进行统计）
 
-```{r echo=show_code_b,eval=run_code_b,fig.align=fig_a,fig.width=fig_w2,fig.asp=fig_asp,fig.show='hold'}
+```{r fig.cap="仿真图形观点人数",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1,fig.show='hold'}
 qplot(time,op_p,data = op_data,xlab="time",ylab="opinion",geom="line")
 qplot(time,op_n,data = op_data,xlab="time",ylab="opinion",geom="line")
 ```
