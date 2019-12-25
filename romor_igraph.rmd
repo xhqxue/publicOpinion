@@ -426,17 +426,18 @@ t_end<-100
 s_data1<-data.frame(time=c(1:t_end),number=sender_t[1:t_end])
 qplot(time,number,data=s_data1,geom="line",col="red")
 # # 不同时期接受者的数量绘图----
-# bb<-sort(unique(acc_i))
-# if(bb[1]==0){
-#   bb<-bb[-1]
-# }
-# bb[1]<-0
-# bc<-NULL
-# for(i in seq(bb)){
-#   bc<-c(bc,length(which(acc_i==bb[i])))
-# }
-# s_data2<-data.frame(time=bb,number=bc)
-# qplot(time,number,data=s_data2,geom="line",col="green")
+bb<-sort(unique(acc_i))
+if(bb[1]==0){
+  bb<-bb[-1]
+}
+
+bc<-NULL
+for(i in seq(bb)){
+  bc<-c(bc,length(which(acc_i==bb[i])))
+}
+bb[1]<-0
+s_data2<-data.frame(time=bb,number=bc)
+qplot(time,number,data=s_data2,geom="line",col="green")
 # # geom_line(data=s_data2,aes(x=time,y=number,color="green"),size=1)
 # # points(bb,bc)
 # # lines(bb,bc)
@@ -561,8 +562,8 @@ qplot(time,op_n,data = op_data,xlab="time",ylab="opinion",geom="line")
 3. 以0为分界线，对观点人数统计（每一时刻大于0的人数进行统计或小于0的人数进行统计）
 
 ```{r fig.cap="仿真图形观点人数",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1,fig.show='hold'}
-qplot(time,op_p,data = op_data,xlab="time",ylab="opinion",geom="line")
-qplot(time,op_n,data = op_data,xlab="time",ylab="opinion",geom="line")
+qplot(time,op_pn,data = op_data,xlab="time",ylab="opinion",geom="line")
+qplot(time,op_nn,data = op_data,xlab="time",ylab="opinion",geom="line")
 ```
 
 ## rumor影响，感染人数

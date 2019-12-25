@@ -24,7 +24,7 @@ get_acc<-function(num_node,d,p_set){
 }
 
 # 得到个体在接受rumor后的发布概率
-get_p_send<-function(i,t,time_step){
+get_p_send<-function(i,t,time_step,id_all){
   # 自接受之日起，之后的时间
   if(t==0.5){
     t=0
@@ -41,3 +41,20 @@ ra_mode<-function(op_1,op_2,u_1,bg){
     return(op_1+bg*abs(op_1-op_2))
   }
 }
+op_psum<-function(m){
+  return(sum(m[which(m>0)]))
+}
+op_nsum<-function(m){
+  return(sum(m[which(m<0)]))
+}
+op_pnum<-function(m){
+  return(length(which(m>0)))
+}
+op_nnum<-function(m){
+  return(length(which(m<0)))
+}
+
+
+
+
+
