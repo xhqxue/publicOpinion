@@ -1,7 +1,7 @@
 ---
 title: "rumor"
 author:
-  - 小鹤
+  - 薛
 documentclass: ctexart
 output:
   rticles::ctex:
@@ -13,9 +13,14 @@ bibliography: scholar.bib
 csl: china-national-standard-gb-t-7714-2015-numeric.csl
 ---
 
-```{r results='hide',echo=FALSE}
-library(igraph)
+```{r results='hide',echo=FALSE,warning=FALSE}
+# library(igraph)
 library(ggplot2)
+
+```
+
+
+```{r echo=FALSE}
 show_code_a<-F
 show_code_b<-F
 run_code_a<-F
@@ -27,17 +32,17 @@ run_code_b<-T
 ## 当前研究思路
 
 1. 进行rumor的仿真模拟（包含群体对rumor的观点变化），得到与参考文献类似的图形，以验证仿真程序的准确性（已完成）
-2. 改变参数（包括外在因素：rumor的质量P，内在因素：网络中中心节点知识背景$\beta$等,），进行大量实验（下一步）
-3. 对实验结果统计分析，与突变模型进行拟合，并结合已知的弹性文献，得到合适的弹性模型。（之后）
+2. 改变参数（包括外在因素：rumor的质量P，内在因素：网络中中心节点知识背景$\beta$等,），进行大量实验（已完成）
+3. 对实验结果统计分析，与突变模型进行拟合，并结合已知的弹性文献，得到合适的弹性模型。（正在进行）
 4. 找到现实的案例进行结合说明（如重庆公交坠桥，女司机被网民造谣事件）
 
-2和3预计需要一周时间。
+
 
 ## 当前研究的创新点
 
-1. 多层网络的设计（以达到）
-2. 观点交互的RA模型与rumor传播结合（以达到）
-3. 运用突变进行研究，得到弹性模型（下一步目标）
+1. 多层网络的设计（已经达到）
+2. 观点交互的RA模型与rumor传播结合（已经达到）
+3. 运用突变进行研究，得到弹性模型（正在进行）
 
 
 ## 之后研究思路
@@ -59,14 +64,9 @@ $$A(t)=A_{int}e^{-\beta t}cos(\omega t + \delta) \tag{1}$$
 
 ## 个人对谣言的观点
 
-1. 谣言被分为四类：否认，中立，质疑，支持。我们引入个人$v$对谣言的看法$B_v$,$B_v\in(-\infty,0]$代表了否认，$B_v\in[0,10]$代表了中立，$B_v\in[10,20]$代表了质疑，$B_v\in[20,\infty]$代表了支持。由此文献支持[@wang2017rumor]，展现了人们会出现一种类似牛群的心态，这种心态使人们盲目跟随他人，借用他们的意见。但是，当个人多次收到相同的信息时，由于信息冗余，对个人的影响可能不会像最初那样大[@ma2016rumor]。所以个人针对谣言的观点定义如下：
-$$
-B_v(t)=\sum_{u\in \mathbb{N}^v}\sum_{j=1}^{n} { \frac{B_u(t-1)}{j}}, \quad for \quad t>0   \tag{2}
-$$
-其中$\mathbb{N}^v$是个体$v$的邻居节点的集合，$n$是个体$v$受到单个邻居影响的次数。
+1. 本次模型使用了RA模型进行观点的交互。
 
 2. 可以使用的验证数据有重庆公交车坠河与女司机被人肉。此文[@zeng2019model]进行了分析。
-3. 本次模型使用了RA模型进行观点的交互。
 
 ## 谣言传播规则
 
@@ -296,7 +296,7 @@ p_acc<-list(p_acc1,p_acc2,p_acc3)
 ```
 
 
-# 传播过程
+
 
 ```{r echo=show_code_a,eval=run_code_a}
 # 初始接受的点
@@ -416,9 +416,9 @@ if(run_code_a==F){
 ```
 
 
+1. 这是根据仿真模型得到的图所示
 
-
-```{r testFigure, fig.cap="仿真图形",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
+```{r testFigure, fig.cap="仿真图形传播者",echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 
 # 由于后期的数据大都为0或变化很小，选择部分前期的数据
 t_end<-100
@@ -437,18 +437,18 @@ for(i in seq(bb)){
 }
 bb[1]<-0
 s_data2<-data.frame(time=bb,number=bc)
-qplot(time,number,data=s_data2,geom="line",col="green")
+# qplot(time,number,data=s_data2,geom="line",col="green")
 # # geom_line(data=s_data2,aes(x=time,y=number,color="green"),size=1)
 # # points(bb,bc)
 # # lines(bb,bc)
 # ----
 ```
 
-1. 这是根据仿真模型得到的图\@ref(fig:testFigure) 所示
+
 
 2. 这是参考文献的图
 
-```{r fig.cap="参考文献" ,echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
+```{r fig.cap="参考文献传播者" ,echo=show_code_b,eval=run_code_b,fig.align=fig_a,out.width=out_w1}
 knitr::include_graphics("images/rumor_number.png")
 ```
 
