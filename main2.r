@@ -25,6 +25,7 @@
       
     }
   }
+  
   p_s<-NULL
   beta_s<-NULL
   for(i in seq(p_need)){
@@ -47,8 +48,10 @@
     return(aa1)
   }
   
-  data3<-data.frame(x1,x2,z)
-  fit3<-cusp(y~z,alpha~x1+x2,beta~x1+x2,data3)
+  # data3<-data.frame(x1,x2,z)
+  fit<-cusp(y~acc_num,alpha~p_s,beta~beta_s,data1)
+  
+  
   
   
  
