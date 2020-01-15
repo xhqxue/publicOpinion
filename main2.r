@@ -25,7 +25,7 @@
       
     }
   }
-  
+#-----p和beta的汇总
   p_s<-NULL
   beta_s<-NULL
   for(i in seq(p_need)){
@@ -51,7 +51,61 @@
   # data3<-data.frame(x1,x2,z)
   fit<-cusp(y~acc_num,alpha~p_s,beta~beta_s,data1)
   
+  po<-li_all[[1]][["popular"]]
+#-----得到积分
+  get_inte<-function(data_1){
+    fun<-approxfun(data_1[,1],data_1[,2])
+    return(integrate(fun, 1, 500,subdivisions = 3000)[[1]])
+  }
+  g_inte<-NULL
+  for(i in seq(li_all)){
+    k<-data.frame(c(1:500),li_all[[i]][["popular"]])
+    g_inte<-c(g_inte,get_inte(k))
+  }
+#-----绘制图形
+  ##使用的数据10，19
+  k<-data.frame(time=c(1:100),popular=li_all[[10]][["popular"]][1:100])
+  p<-ggplot(k)
+  p<-p+aes(time,popular)
+  p+geom_line(size=2)+theme(axis.title =element_text(size=24),axis.text =element_text(size=24,face="bold"))
+#------ 汇总p，beta，g_inte
+  g_inte_log<-log(g_inte)
+
+  data_1<-data.frame(p=p_s,beta=beta_s,g_inte,g_inte_log)
+#-----绘图
+  pp<-ggplot(data_1,aes(beta,g_inte_log,group=p,colour=p))
+  pp+geom_line()+ylab("popular(log)")+xlab("beta")+theme(axis.title =element_text(size=24),axis.text =element_text(size=24,face="bold"))
   
+  pp<-ggplot(data_1,aes(beta,g_inte,group=p,colour=p))
+  pp+geom_line()+ylab("popular")+xlab("beta")+theme(axis.title =element_text(size=24),axis.text =element_text(size=24,face="bold"))
   
+  pp<-ggplot(data_1,aes(p,g_inte_log,group=beta,colour=beta))
+  pp+geom_line()+ylab("popular(log())")+xlab("p")+theme(axis.title =element_text(size=24),axis.text =element_text(size=24,face="bold"))
   
+  pp<-ggplot(data_1,aes(p,g_inte,group=beta,colour=beta))
+  pp+geom_line()+ylab("popular")+xlab("p")+theme(axis.title =element_text(size=24),axis.text =element_text(size=24,face="bold"))
+
+  #----接受人数
+  num<-NULL
+  for(i in seq(li_all)){
+    num<-c(num,li_all[[i]][500,"acc_number_all"])
+  }
+  data_1<-data.frame(p=p_s,beta=beta_s,g_inte,g_inte_log,num)
+  
+  pp<-ggplot(data_1,aes(beta,num,group=p,colour=p))
+  pp+geom_line()+ylab("number")+xlab("beta")+theme(axis.title =element_text(size=24),axis.text =element_text(size=24,face="bold"))
+  
+  pp<-ggplot(data_1,aes(p,num,group=beta,colour=beta))
+  pp+geom_line()+ylab("number")+xlab("p")+theme(axis.title =element_text(size=24),axis.text =element_text(size=24,face="bold"))
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
  
